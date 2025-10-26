@@ -33,6 +33,7 @@ staticfiles/
 venv/
 env/
 ENV/
+config.py
 
 # IDEs
 .vscode/
