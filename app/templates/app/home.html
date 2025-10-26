@@ -1,26 +1,27 @@
 {% extends 'app/base.html' %}
 {% block content %}
-<!--<div class="jumbotron">-->
-<!--    <h1 class="display-4">Добро пожаловать, {{user.username}}!</h1>-->
-<!--    <div class="lead">Вы успешно вошли в систему</div>-->
-<!--    <hr class="my-4">-->
-<!--    <p>Это защищенная страница, доступная только автоматизированным пользователям</p>-->
-<!--</div>-->
-<body>
-    <h1>Добро пожаловать на главную!</h1>
-    <h2>Последние посты:</h2>
+
+<div class="container mt-4">
+    <h1 class="mb-3">Добрый блог</h1>
+    <h2 class="mb-4">Последние посты:</h2>
+
     {% if posts %}
-        <ul>
-        {% for post in posts %}
-            <li>
-                <strong>{{ post.title }}</strong> (Автор: {{ post.author.username }})<br>
-                <!-- Отображаем первые 100 символов содержимого -->
-                {{ post.content|truncatechars:100 }}
-                <!-- Ссылка на детальную страницу поста (опционально) -->
-            </li>
-        {% endfor %}
-        </ul>
+        <div class="row">
+            {% for post in posts %}
+                <div class="col-md-6 mb-4">
+                    <div class="post-card p-3">
+                        <h3 class="post-title">{{ post.title }}</h3>
+                        <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
+                        <p class="post-content">{{ post.content|truncatechars:150 }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
-        <p>Постов пока нет.</p>
+        <div class="alert alert-info" role="alert">
+            Постов пока нет. Будьте первым!
+        </div>
     {% endif %}
+</div>
+
 {% endblock %}
