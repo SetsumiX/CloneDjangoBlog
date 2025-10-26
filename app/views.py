@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserLoginForm
+from .models import Post
 
 
 # Create your views here.
@@ -44,5 +45,12 @@ def user_logout(request):
 
 @login_required
 def home(request):
-    return render(request, 'app/home.html')
+    # Получаем все объекты Post из базы данных
+    posts = Post.objects.all()
+
+    # Передаем список posts в шаблон home.html через контекст
+    context = {
+        'posts': posts, # 'posts' - это имя переменной, которое будет доступно в шаблоне
+    }
+    return render(request, 'app/home.html', context)
 

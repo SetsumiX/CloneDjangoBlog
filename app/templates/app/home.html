@@ -1,9 +1,26 @@
 {% extends 'app/base.html' %}
 {% block content %}
-<div class="jumbotron">
-    <h1 class="display-4">Добро пожаловать, {{user.username}}!</h1>
-    <div class="lead">Вы успешно вошли в систему</div>
-    <hr class="my-4">
-    <p>Это защищенная страница, доступная только автоматизированным пользователям</p>
-</div>
+<!--<div class="jumbotron">-->
+<!--    <h1 class="display-4">Добро пожаловать, {{user.username}}!</h1>-->
+<!--    <div class="lead">Вы успешно вошли в систему</div>-->
+<!--    <hr class="my-4">-->
+<!--    <p>Это защищенная страница, доступная только автоматизированным пользователям</p>-->
+<!--</div>-->
+<body>
+    <h1>Добро пожаловать на главную!</h1>
+    <h2>Последние посты:</h2>
+    {% if posts %}
+        <ul>
+        {% for post in posts %}
+            <li>
+                <strong>{{ post.title }}</strong> (Автор: {{ post.author.username }})<br>
+                <!-- Отображаем первые 100 символов содержимого -->
+                {{ post.content|truncatechars:100 }}
+                <!-- Ссылка на детальную страницу поста (опционально) -->
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Постов пока нет.</p>
+    {% endif %}
 {% endblock %}
