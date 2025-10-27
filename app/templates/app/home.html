@@ -3,54 +3,57 @@
 
 <div class="d-flex"> <!-- Flex container для боковой панели и основного контента -->
 
-  <!-- Боковая панель -->
-  <aside id="sidebar" class="bg-dark text-white flex-shrink-0">
-    <div class="sidebar-content p-3">
-      <div class="sidebar-header mb-3">
-        <h5 class="text-white">Меню Блога</h5>
-      </div>
-      <ul class="nav flex-column">
-        <!-- Пример элементов навигации -->
-        <!--
-        <li class="nav-item">
-            <a class="nav-link text-light" href="#"><i class="fas fa-home"></i> Домой</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" href="#">Мои посты</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" href="#">Категории</a>
-        </li>
-        -->
-      </ul>
-    </div>
-  </aside>
+    <!-- Боковая панель -->
+    <aside id="sidebar" class="bg-dark text-white flex-shrink-0">
+        <div class="sidebar-content p-3">
+            <div class="sidebar-header mb-3">
+                <h5 class="text-white">Меню Блога</h5>
+            </div>
+            <ul class="nav flex-column">
+                <!-- Пример элементов навигации -->
+                <!--
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#"><i class="fas fa-home"></i> Домой</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">Мои посты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="#">Категории</a>
+                </li>
+                -->
+            </ul>
+        </div>
+    </aside>
 
-  <!-- Основной контент -->
-  <div class="flex-grow-1 bg-light" style="margin-left: 10px; padding-right: 20px;"> <!-- Добавлен небольшой отступ от боковой панели -->
-    <div class="container-fluid mt-4 px-3">
-      <h1 class="mb-3">Добрый блог</h1>
-      <h2 class="mb-4">Последние посты:</h2>
+    <!-- Основной контент -->
+    <div class="flex-grow-1 bg-light" style="margin-left: 10px; padding-right: 20px;">
+        <!-- Добавлен небольшой отступ от боковой панели -->
+        <div class="container-fluid mt-4 px-3">
+            <h1 class="mb-3">Добрый блог</h1>
+            <h2 class="mb-4">Последние посты:</h2>
 
-      {% if posts %}
-          <div class="row g-4"> <!-- g-4 — увеличенный вертикальный и горизонтальный отступ между колонками -->
-              {% for post in posts %}
-                  <div class="col-md-6 col-lg-4 mb-4">
-                      <div class="post-card p-3 h-100">
-                          <h3 class="post-title">{{ post.title }}</h3>
-                          <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
-                          <p class="post-content">{{ post.content|truncatechars:150 }}</p>
-                      </div>
-                  </div>
-              {% endfor %}
-          </div>
-      {% else %}
-          <div class="alert alert-info" role="alert">
-              Постов пока нет. Будьте первым!
-          </div>
-      {% endif %}
+            {% if posts %}
+            <div class="row g-4"> <!-- g-4 — увеличенный вертикальный и горизонтальный отступ между колонками -->
+                {% for post in posts %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <a href="{% url 'post_detail' post.id %}" class="text-decoration-none text-reset">
+                        <div class="post-card p-3 h-100">
+                            <h3 class="post-title">{{ post.title }}</h3>
+                            <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
+                            <p class="post-content">{{ post.content|truncatechars:150 }}</p>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                Постов пока нет. Будьте первым!
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
 
 </div> <!-- Конец d-flex -->
 

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -43,7 +43,6 @@ def user_logout(request):
     return redirect('login')
 
 
-@login_required
 def home(request):
     # Получаем все объекты Post из базы данных
     posts = Post.objects.all()
@@ -54,3 +53,9 @@ def home(request):
     }
     return render(request, 'app/home.html', context)
 
+@login_required
+def post_detail(request, post_id):
+    # Получаем конкретный пост по ID или возвращаем 404, если не найден
+    post = get_object_or_404(Post, id=post_id)
+    # Можно передать дополнительные данные, например, комментарии
+    return render(request, 'app/post_detail.html', {'post': post})

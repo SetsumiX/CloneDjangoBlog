@@ -1,0 +1,25 @@
+<!-- blog/templates/blog/post_detail.html -->
+{% extends 'app/base.html' %}
+
+{% block title %}{{ post.title }} - Мой сайт{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <a href="{% url 'home' %}" class="btn btn-secondary mb-3">
+        &larr; Назад к списку постов
+    </a>
+
+    <article class="post-detail-card p-4 bg-white rounded shadow-sm">
+        <header>
+            <h1 class="post-title">{{ post.title }}</h1>
+            <p class="post-meta text-muted">
+                Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d M Y H:i" }}
+            </p>
+        </header>
+        <hr>
+        <div class="post-content-body">
+            {{ post.content }}
+        </div>
+    </article>
+</div>
+{% endblock %}
