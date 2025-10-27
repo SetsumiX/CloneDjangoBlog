@@ -1,4 +1,4 @@
-/* === Общие стили === */
+/* === Общие стили (остаются без изменений) === */
 body {
     background-color: #f8fafc; /* Более мягкий светло-голубой фон */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -7,9 +7,8 @@ body {
 .navbar-brand {
     font-weight: bold;
 }
-.container{
-    text-align: center;
-}
+/* Убираем центровку для body, так как теперь используется flex на странице home */
+/* .container { text-align: center; } */
 
 /* === Алерт === */
 .alert {
@@ -18,7 +17,7 @@ body {
     text-align: center;
 }
 
-/* === Карточки постов === */
+/* === Карточки постов (остаются без изменений) === */
 .post-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -27,32 +26,34 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     padding: 20px;
     height: 100%;
-    weight: 100%;
+    /* width: 100%; /!* Убираем width: 100% если используется flexbox *!/ */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-        border-color: #b2d8ff;
-    }
 }
 
-.post-card
-.post-title {
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    border-color: #b2d8ff;
+}
+
+.post-card .post-title {
     font-size: 1.25rem;
     font-weight: 600;
     color: #1e293b;
     margin-bottom: 0.5rem;
     line-height: 1.3;
 }
+
 .post-meta {
     font-size: 0.875rem;
     color: #64748b;
     margin-bottom: 0.75rem;
     font-style: italic;
 }
+
 .post-content {
     font-size: 0.95rem;
     color: #334155;
@@ -61,11 +62,12 @@ body {
     flex-grow: 1;
 }
 
-/* === Заголовки страницы === */
+/* === Заголовки страницы (остаются без изменений) === */
 h1 {
     color: #1e293b;
     font-weight: 700;
     letter-spacing: -0.5px;
+    text-align: center;
 }
 h2 {
     color: #334155;
@@ -73,3 +75,97 @@ h2 {
     margin-top: 2rem;
     margin-bottom: 1rem;
 }
+
+/* === Стили для боковой панели (только для страниц, где она используется) === */
+#sidebar {
+    width: 90px; /* Начальная ширина */
+    height: calc(100vh - 56px - 2rem); /* Высота: 100% вьюпорта - высота navbar - отступ контейнера */
+    min-height: 400px; /* Минимальная высота, если контент короткий */
+    transition: width 0.3s ease; /* Плавный переход ширины */
+    overflow: hidden; /* Скрывает содержимое, выходящее за границы */
+    display: flex;
+    flex-direction: column;
+    /* position: sticky; /* Опционально: может помочь при внутреннем скролле */
+    top: 56px; /* Приклеивает к верху под navbar */
+}
+
+#sidebar:hover {
+    width: 250px; /* Ширина при наведении */
+}
+
+.sidebar-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    /* padding: 15px; /!* Уже задан через p-3 в HTML *!/ */
+}
+
+.sidebar-header {
+    white-space: nowrap; /* Не переносит текст заголовка */
+    overflow: hidden; /* Скрывает текст, выходящий за границы */
+    text-overflow: ellipsis; /* Добавляет "..." если текст обрезан */
+    /* margin-bottom: 20px; /!* Уже задан через mb-3 в HTML *!/ */
+}
+
+.sidebar-header h5 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.nav.flex-column {
+    flex-grow: 1; /* Растягивает список навигации на оставшееся место */
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    border-radius: 4px;
+    margin: 5px 0;
+    white-space: nowrap; /* Не переносит текст ссылок */
+    overflow: hidden; /* Скрывает текст, выходящий за границы */
+    text-overflow: ellipsis; /* Добавляет "..." если текст обрезан */
+    padding: 8px 12px; /* Добавлен внутренний отступ для удобства клика */
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Дополнительный стиль для текста внутри .nav-link, чтобы он скрывался/появлялся плавно */
+.nav-link::before {
+    content: attr(data-bs-title); /* Используем атрибут data-bs-title для отображения текста при hover */
+    visibility: hidden; /* Сначала скрыт */
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    position: absolute;
+    background-color: #343a40; /* Цвет фона как у боковой панели */
+    color: white;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-left: 10px;
+    z-index: 1001; /* Выше других элементов */
+}
+
+#sidebar:hover .nav-link::before {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Если вы используете иконки (например, Font Awesome), можно добавить их стили */
+/* .nav-link i { */
+/*   width: 20px; /!* Зарезервируйте место для иконки *!/ */
+/*   text-align: center; */
+/*   margin-right: 10px; */
+/* } */
+
+/* .nav-link span { */
+/*   opacity: 0; */
+/*   visibility: hidden; */
+/*   transition: opacity 0.2s ease, visibility 0.2s ease; */
+/* } */
+
+/* #sidebar:hover .nav-link span { */
+/*   opacity: 1; */
+/*   visibility: visible; */
+/* } */

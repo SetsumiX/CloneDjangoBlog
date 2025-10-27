@@ -1,27 +1,57 @@
 {% extends 'app/base.html' %}
 {% block content %}
 
-<div class="container mt-4">
-    <h1 class="mb-3">Добрый блог</h1>
-    <h2 class="mb-4">Последние посты:</h2>
+<div class="d-flex"> <!-- Flex container для боковой панели и основного контента -->
 
-    {% if posts %}
-        <div class="row">
-            {% for post in posts %}
-                <div class="col-md-6 mb-4">
-                    <div class="post-card p-3">
-                        <h3 class="post-title">{{ post.title }}</h3>
-                        <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
-                        <p class="post-content">{{ post.content|truncatechars:150 }}</p>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-info" role="alert">
-            Постов пока нет. Будьте первым!
-        </div>
-    {% endif %}
-</div>
+  <!-- Боковая панель -->
+  <aside id="sidebar" class="bg-dark text-white flex-shrink-0">
+    <div class="sidebar-content p-3">
+      <div class="sidebar-header mb-3">
+        <h5 class="text-white">Меню Блога</h5>
+      </div>
+      <ul class="nav flex-column">
+        <!-- Пример элементов навигации -->
+        <!--
+        <li class="nav-item">
+            <a class="nav-link text-light" href="#"><i class="fas fa-home"></i> Домой</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" href="#">Мои посты</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-light" href="#">Категории</a>
+        </li>
+        -->
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Основной контент -->
+  <div class="flex-grow-1" style="margin-left: 10px;"> <!-- Добавлен небольшой отступ от боковой панели -->
+    <div class="container mt-4">
+      <h1 class="mb-3">Добрый блог</h1>
+      <h2 class="mb-4">Последние посты:</h2>
+
+      {% if posts %}
+          <div class="row">
+              {% for post in posts %}
+                  <div class="col-md-6 mb-4">
+                      <div class="post-card p-3">
+                          <h3 class="post-title">{{ post.title }}</h3>
+                          <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
+                          <p class="post-content">{{ post.content|truncatechars:150 }}</p>
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+      {% else %}
+          <div class="alert alert-info" role="alert">
+              Постов пока нет. Будьте первым!
+          </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div> <!-- Конец d-flex -->
 
 {% endblock %}
