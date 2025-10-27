@@ -42,7 +42,7 @@ def user_logout(request):
     logout(request)
     return redirect('login')
 
-
+@login_required # Проверка на вход в аккунт, будет ли показывать информацию не залогиненым
 def home(request):
     # Получаем все объекты Post из базы данных
     posts = Post.objects.all()

@@ -167,3 +167,7 @@ h2 {
     opacity: 1;
 }
 
+.col-md-6{
+    display: flex;
+    justify-content: space-around;
+}...
