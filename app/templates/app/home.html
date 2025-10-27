@@ -27,16 +27,16 @@
   </aside>
 
   <!-- Основной контент -->
-  <div class="flex-grow-1" style="margin-left: 10px;"> <!-- Добавлен небольшой отступ от боковой панели -->
-    <div class="container mt-4">
+  <div class="flex-grow-1 bg-light" style="margin-left: 10px; padding-right: 20px;"> <!-- Добавлен небольшой отступ от боковой панели -->
+    <div class="container-fluid mt-4 px-3">
       <h1 class="mb-3">Добрый блог</h1>
       <h2 class="mb-4">Последние посты:</h2>
 
       {% if posts %}
-          <div class="row">
+          <div class="row g-4"> <!-- g-4 — увеличенный вертикальный и горизонтальный отступ между колонками -->
               {% for post in posts %}
-                  <div class="col-md-6 mb-4">
-                      <div class="post-card p-3">
+                  <div class="col-md-6 col-lg-4 mb-4">
+                      <div class="post-card p-3 h-100">
                           <h3 class="post-title">{{ post.title }}</h3>
                           <p class="post-meta"><strong>Автор:</strong> {{ post.author.username }}</p>
                           <p class="post-content">{{ post.content|truncatechars:150 }}</p>
