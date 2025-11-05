@@ -98,5 +98,16 @@ def del_post(request, post_id):
     return redirect('post_detail', post_id=post_id)
 
 @login_required
-def test():
-    ...
+def toggle_like(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    like_object, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if created:
+        action = "Liked"
+    else:
+        like_object.delete()
+        action = "Unliked"
+    messages.info(request,f"{action} пост {post.title}.")
+
+    next_url = request.META.get("HTTP_REFERER", reverse("home"))
+    return HttpResponseRedirect(next_url)

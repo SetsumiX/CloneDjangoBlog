@@ -14,7 +14,7 @@ class Post(models.Model):
         return self.likes.count()
 
     def user_is_like(self, user):
-        return self.likes.fylter(user=user).exists()
+        return self.likes.filter(user=user).exists()
 
     class Meta:
         verbose_name = 'Post'
