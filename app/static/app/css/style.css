@@ -176,3 +176,7 @@ h2 {
 .modal-body{
     display: flex;
 }
+
+.img-fluid.rounded{
+    width: 250px;
+}

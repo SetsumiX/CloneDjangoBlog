@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .forms import UserRegisterForm, UserLoginForm, PostForm
-from .models import Post, Like
+from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm
+from .models import Post, Like, Comment
 
 # Create your views here.
 def register(request):
@@ -63,16 +63,18 @@ def post_detail(request, post_id):
     user = request.user
     if user.is_authenticated:
         user_liked = post.likes.filter(user=user).exists()
+
+        comment_form = CommentForm()
     # Можно передать дополнительные данные, например, комментарии
     return render(request, 'app/post_detail.html',
                   {'post': post,
-                   'user_liked': user_liked}
-                  )
+                   'user_liked': user_liked,
+                   'comment_form': comment_form,})
 
 @login_required
 def post_create(request):
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
@@ -111,3 +113,37 @@ def toggle_like(request, post_id):
 
     next_url = request.META.get("HTTP_REFERER", reverse("home"))
     return HttpResponseRedirect(next_url)
+
+@login_required
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if post.author != request.user:
+        messages.error(request, "У вас недостаточно прав для его изменения")
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Пост {post.title} успешно обнавлён")
+            return redirect("post_detail", post_id=post.id)
+
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'app/post_edit.html',  {'form': form, 'post': post})
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, post_id)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(f"Сообщение к посту {post.title} было успешно добавлено")
+            return redirect('post_detail', post_id=post.id)
+    return redirect('post_detail', post_id=post.id)
