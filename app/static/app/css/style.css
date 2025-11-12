@@ -180,3 +180,8 @@ h2 {
 .img-fluid.rounded{
     width: 250px;
 }
+
+.form-control{
+    height: 100px;
+    width: 500px;
+}

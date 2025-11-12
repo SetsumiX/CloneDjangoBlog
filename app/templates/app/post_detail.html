@@ -55,6 +55,31 @@
             </div>
         </footer>
     </article>
+<!-- секция комментариев + -->
+    <section class="mt-4">
+        <h3>Комментарии ({{post.comments.count}})</h3>
+        <!-- Форма добавления комментария + -->
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'add_comment' post.id %}" class="mb-4" id="comment-form-top">
+            {% csrf_token %}
+            {{comment_form.content.label_tag}}
+            {{comment_form.content}}
+            {{comment_form.parent_id}} {#Скрыто#}
+            <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+        </form>
+        {% else %}
+        <p class="text-muted mb-4">Что бы оставить комментарий, <a href="{% url 'login' post %}">авторизируйтесь</a></p>
+        {% endif %}
+        <!-- Отображение комментария + -->
+        {% for item in comment_tree %}
+            {% include 'app/comment_tree_item.html' with comment=item.comment replies=item.replies level=0 %}
+        {% empty %}
+        <p class="text-muted">Пока нет комментариев</p>
+        {% endfor %}
+        <!-- Отображение комментария - -->
+        <!-- Форма добавления комментария - -->
+    </section>
+<!-- секция комментариев - -->
     {% if user.is_authenticated and post.author == user %}
         <div class="mt-3 text-end">
             <!-- Кнопка изменения поста + -->
@@ -88,4 +113,25 @@
         </div>
     {% endif %}
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const replyButton = document.querySelectorAll('.reply-btn');
+        const commentForm = document.getElementById('comment-form-top');
+        const contentField = document.querySelector('textarea[name="content"]');
+        const parentField = document.querySelector('input[name="parent_id"]');
+
+        replyButton.forEach(button =>{
+            button.addEventListener('click', function(){
+                const commentId = this.getAttribute('data-comment-id');
+                parentField.value = commentId;
+
+                commentForm.scrollIntoView({behavior: 'smooth'})
+                contentField.focus()
+
+                const authorName = this.closest('.card-body').querySelector('h6').innerText.trim().split(' ')[0]
+                contentField.value = '@${authorName}, ';
+            })
+        })
+    })
+</script>
 {% endblock %}

@@ -64,12 +64,16 @@ def post_detail(request, post_id):
     if user.is_authenticated:
         user_liked = post.likes.filter(user=user).exists()
 
-        comment_form = CommentForm()
+    all_comments = Comment.objects.filter(post=post).select_related("author").prefetch_related("comment_likes").order_by("create_at")
+    comment_tree = build_comment_tree(all_comments)
+
+    comment_form = CommentForm(post_id=post_id)
     # Можно передать дополнительные данные, например, комментарии
     return render(request, 'app/post_detail.html',
                   {'post': post,
                    'user_liked': user_liked,
-                   'comment_form': comment_form,})
+                   'comment_form': comment_form,
+                   'comment_tree': comment_tree,})
 
 @login_required
 def post_create(request):
@@ -135,15 +139,35 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, post_id)
+    post = get_object_or_404(Post, id=post_id)
 
     if request.method == 'POST':
-        form = CommentForm(request.POST)
+        form = CommentForm(request.POST, post_id=post_id)
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = post
             comment.author = request.user
             comment.save()
-            messages.success(f"Сообщение к посту {post.title} было успешно добавлено")
+            messages.success(request, f"Сообщение к посту {post.title} было успешно добавлено")
             return redirect('post_detail', post_id=post.id)
+
     return redirect('post_detail', post_id=post.id)
+
+# Построение комментариев в виде дерева
+def build_comment_tree(comments):
+    comment_dict = {}
+    root_comments = []
+
+    for comment in comments:
+        comment_dict[comment.id] = {'comment': comment, 'replies': []}
+
+    for item in comment_dict.values():
+        comment_obj = item['comment']
+        if comment_obj.parent_id:
+            parent_item = comment_dict.get(comment_obj.parent_id)
+            if parent_item:
+                parent_item['replies'].append(item)
+        else:
+            root_comments.append(item)
+    return root_comments
