@@ -21,7 +21,7 @@
                 <p><strong>Дата рождения: </strong>{{profile_user.birth_date|date:"d M Y"}}</p>
             {% endif %}
             {% if profile.bio %}
-                <p><strong>О себе: </strong>{{profile_user.bio}}</p>
+                <p><strong>О себе:</strong>{{profile.bio}}</p>
             {% endif %}
             {% if profile_user == user %}
             <a href="{% url 'profile_edit' %}" class="btn btn-primary">Редактировать профиль</a>
