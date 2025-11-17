@@ -129,7 +129,7 @@
                 contentField.focus()
 
                 const authorName = this.closest('.card-body').querySelector('h6').innerText.trim().split(' ')[0]
-                contentField.value = '@${authorName}, ';
+                contentField.value = `@${authorName}, `;
             })
         })
     })

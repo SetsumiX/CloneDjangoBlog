@@ -6,7 +6,7 @@
             {{ comment.author.username }} <small class="text-muted">{{comment.create_at|date:"d M Y H:i"}}</small>
         </h6>
         <p class="card-text">{{comment.content}}</p>
-        {% if user.is_authenticate %}
+        {% if user.is_authenticated %}
         <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="{{comment.id}}">Ответить</button>
         {% endif %}
     </div>
@@ -14,4 +14,4 @@
 
 {% for reply_item in replies %}
     {% include 'app/comment_tree_item.html' with comment=reply_item.comment replies=reply_item.replies level=level|add:1 %}
-{% empty %}
+{% endfor %}

@@ -182,6 +182,16 @@ h2 {
 }
 
 .form-control{
-    height: 100px;
+    height: 65px;
     width: 500px;
+}
+
+#comment-form-top.mb-4{
+    display: flex;
+    justify-content: center;
+}
+
+.btn.btn-primary.mt-2{
+    margin-left: 10px;
+    height: 50px;
 }
