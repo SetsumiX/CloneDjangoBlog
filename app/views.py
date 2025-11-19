@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm, UserProfileForm
-from .models import Post, Like, Comment, UserProfile
+from .models import Post, Like, Comment, UserProfile, Favorite
 
 # Create your views here.
 def register(request):
@@ -65,6 +65,8 @@ def post_detail(request, post_id):
     if user.is_authenticated:
         user_liked = post.likes.filter(user=user).exists()
 
+    user_favorited = post.favorited_by.filter(user=request.user).exists()
+
     all_comments = Comment.objects.filter(post=post).select_related("author").prefetch_related("comment_likes").order_by("create_at")
     comment_tree = build_comment_tree(all_comments)
 
@@ -74,7 +76,8 @@ def post_detail(request, post_id):
                   {'post': post,
                    'user_liked': user_liked,
                    'comment_form': comment_form,
-                   'comment_tree': comment_tree,})
+                   'comment_tree': comment_tree,
+                   'user_favorited': user_favorited,})
 
 @login_required
 def post_create(request):
@@ -194,3 +197,32 @@ def profile_edit(request):
         form = UserProfileForm(instance=profile, user=request.user)
 
     return render(request, 'app/profile_edit.html', {"form": form})
+
+@login_required
+def my_posts(request):
+    posts = Post.objects.filter(author=request.user).select_related('author__profile').prefetch_related('likes', 'comments')
+    return render(request, 'app/my_posts.html', {'posts': posts})
+
+@login_required
+def favorites(request):
+    favorite_entries = Favorite.objects.filter(user=request.user).select_related('post__author__profile').prefetch_related('post__likes', "post__comments")
+    posts = [entry.post for entry in favorite_entries]
+    return render(request, 'app/favorites.html', {'posts': posts})
+
+@login_required
+def toggle_favorite(request, post_id):
+    post = get_object_or_404(Post, post_id=post_id)
+    if post.author == request.user:
+        messages.error(request, "Нельзя добавить в избранное свой пост")
+        next_url = request.META.get("HTTP_REFERER", reverse("home"))
+        return HttpResponseRedirect(next_url)
+    favorite_obj, created = Favorite.objects.get_or_create(user=request.user, post=post)
+    if created:
+        action = "добвален в избранное"
+    else:
+        favorite_obj.delete()
+        action = "удалён из избранного"
+
+    messages.info(request, f'Пост {post.title} был {action}')
+    next_url = request.META.get('HTTP_REFERER', reverse('home'))
+    return HttpResponseRedirect(next_url)

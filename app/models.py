@@ -16,6 +16,9 @@ class Post(models.Model):
     def get_like_count(self):
         return self.likes.count()
 
+    def get_comment_count(self):
+        return self.comments.count()
+
     def user_is_like(self, user):
         return self.likes.filter(user=user).exists()
 
@@ -98,3 +101,17 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = 'UserProfile'
         verbose_name_plural = "UserProfile's"
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_posts')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'post')
+        verbose_name = 'Favorite'
+        verbose_name_plural = 'Favorites'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username}'favorite {self.post.title}"

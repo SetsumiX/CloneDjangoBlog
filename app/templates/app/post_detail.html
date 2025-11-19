@@ -12,9 +12,18 @@
     <article class="post-detail-card p-4 bg-white rounded shadow-sm">
         <header>
             <h1 class="post-title">{{ post.title }}</h1>
-            <p class="post-meta text-muted">
-                Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d M Y H:i" }}
-            </p>
+            <!-- Аватар автора + -->
+                <div class="d-flex align-items-center mb-2">
+                    {% if post.author.profile.avatar %}
+                        <img src="{{ post.author.profile.avatar.url }}" alt="Картинка профиля {{ post.author.username }}" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                    {% else %}
+                        <img src="https://99px.ru/sstorage/1/2021/11/image_13011211933406044080.gif" alt="Картинка профиля {{ post.author.username }}" class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                    {% endif %}
+                    <p class="post-meta text-muted">
+                        Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d M Y H:i" }}
+                    </p>
+                </div>
+            <!-- Аватар автора - -->
         </header>
         <hr>
         <div class="post-content-body">
@@ -37,6 +46,19 @@
                         {{post.get_like_count}} лайк {{post.get_like_count|pluralize}}
                     </small>
                 </div>
+                <!-- кнопка добавления в избранное -->
+                <form method="post" action="{% url 'toggle_favorite' post.id %}" class="d-inline me-2">
+                    {% csrf_token %}
+                    {% if user_favorited %}
+                        <button type="submit" class="btn btn-sm btn-warning" title="Убрать из избранное">
+                            <b>Убрать из избранное</b>
+                        </button>
+                    {% else %}
+                        <button type="submit" class="btn btn-sm btn-outline-warning" title="Добавить в избранное">
+                            <b>В избранное</b>
+                        </button>
+                    {% endif %}
+                </form>
                 <!-- кнопка лайка -->
                 {% if user.is_authenticated and post.author != user %}
                     <form method="post" action="{% url 'toggle_like' post.id %}">
