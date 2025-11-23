@@ -21,7 +21,7 @@ body {
 }
 
 /* === Карточки постов  === */
-.post-card {
+.post-1 {
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -175,6 +175,31 @@ h2 {
 
 .modal-body{
     display: flex;
+}
+
+.row.justify-center-center{
+    justify-content: center;
+}
+
+.card{
+    display: flex;
+    align-items: center;
+}
+
+.btn.btn-primary{
+    margin-top: 15px;
+}
+
+.mb3{
+    width: 200px;
+    length: 62px;
+    margin-top: 15px;
+}
+
+.form-login{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .img-fluid.rounded{
