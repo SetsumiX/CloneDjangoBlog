@@ -27,6 +27,13 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{% url 'profile_view' user.username %}">Мой профиль</a></li>
                             <li><a class="dropdown-item" href="{% url 'profile_edit' %}">Редактировать профиль</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'messages_list' %}">Общение
+                                {% if unread_messages_count > 0 %}
+                                    <span class="badge bg-danger ms-1">{{unread_messages_count}}</span>
+                                {% endif %}
+                                </a>
+                            </li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
                         </ul>

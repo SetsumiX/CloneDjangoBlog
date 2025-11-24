@@ -115,3 +115,20 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'favorite {self.post.title}"
+
+# Личные сообщения
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="send_message")
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_message")
+    subject = models.CharField(max_length=200, blank=True)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Сообщение от {self.sender.username} для {self.recipient.username}"
+
+    class Meta:
+        verbose_name = "Message"
+        verbose_name_plural = "Messages"
+        ordering = ["-timestamp"]

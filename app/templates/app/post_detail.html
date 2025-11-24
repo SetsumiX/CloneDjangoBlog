@@ -22,6 +22,10 @@
                     <p class="post-meta text-muted">
                         Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d M Y H:i" }}
                     </p>
+                    <!-- кнопка общения -->
+                    {% if user.is_authenticated and post.author != user %}
+                    <a href="{% url 'send_message' post.author.id %}" class="btn btn-sm btn-outline-info">Написать сообщение</a>
+                    {% endif %}
                 </div>
             <!-- Аватар автора - -->
         </header>

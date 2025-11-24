@@ -5,8 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm, UserProfileForm
-from .models import Post, Like, Comment, UserProfile, Favorite
+from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm, UserProfileForm, MessageForm
+from .models import Post, Like, Comment, UserProfile, Favorite, Message
 
 # Create your views here.
 def register(request):
@@ -231,3 +231,50 @@ def toggle_favorite(request, post_id):
     messages.info(request, f'Пост {post.title} был {action}')
     next_url = request.META.get('HTTP_REFERER', reverse('home'))
     return HttpResponseRedirect(next_url)
+
+@login_required
+def messages_list(request):
+    receives_messages = Message.objects.filter(recipient=request.user).select_related('sender__profile').order_by('-timestamp')
+    unread_count = receives_messages.filter(is_read=False).count()
+
+    context = {
+        'messages': receives_messages,
+        'unread_count': unread_count,
+    }
+
+    return render(request, 'app/messages_list.html', context)
+
+@login_required
+def message_detail(request, message_id):
+    message = get_object_or_404(Message, id=message_id, recipient=request.user)
+    if not message.is_read:
+        message.is_read = True
+        message.save()
+
+    context = {
+        'message': message,
+    }
+
+    return render(request, 'app/message_detail.html', context)
+
+@login_required
+def send_message(request, recipient_id):
+    recipient = get_object_or_404(User, id=recipient_id)
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.recipient = recipient
+            message.save()
+            messages.success(request, f"Сообщение успешно отправленно, кому:{recipient.username}")
+            return redirect('profile_view', username=recipient.username)
+        else:
+            form = MessageForm()
+
+        context = {
+            'form': form,
+            'recipient': recipient,
+        }
+
+        return render(request, 'app/sand_message.html', context)

@@ -1,0 +1,18 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <a href="{% url 'messages_list' %}" class="btn btn-secondary mb-3">
+            &larr; Назад
+        </a>
+        <div class="card">
+            <div class="card-header">
+                <h4>{{message.subject|default:'Без названия'}}</h4>
+                <small>От: {{message.sender.username}} | {{message.timestamp|date:'d M Y H:i'}}</small>
+            </div>
+            <div class="card-body">
+                <p>{{message.content}}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

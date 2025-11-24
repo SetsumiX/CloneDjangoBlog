@@ -1,0 +1,15 @@
+{% extends 'app/base.html' %}
+
+{% block content %}
+
+<div class="container mb-4">
+    <h2>Написать сообщение для {{recipient.username}}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button class="btn btn-primary" type="submit">Отправить</button>
+        <a href="{% url 'profile_view.html' recipient.username %}" class="btn btn-secondary">Назад</a>
+    </form>
+</div>
+
+{% endblock %}
