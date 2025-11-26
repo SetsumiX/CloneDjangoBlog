@@ -4,24 +4,115 @@
 <div class="container mt-4">
     <h2>Личные сообщения</h2>
 
-    {% if messages %}
-        <div class="list-group">
-            {% for message in messages %}
-                <a class="list-group-item list-group-item-action {% if not message.is_read %} list-group-item-warning {% endif %}"
-                   href="{% url 'message_dtail' message.id %}">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{message.subject|default:'Без названия'}}</h5>
-                        <small>{{message.timestamp|date:'d M Y H:i'}}</small>
-                    </div>
-                    <p class="mb-1">От: {{message.sender.username}}</p>
-                    {% if not message.is_read %}
-                        <span class="badge bg-warning">*Новое*</span>
-                    {% endif %}
-                </a>
-            {% endfor %}
+    <div class="row">
+        <!--     Левая колонка     -->
+        <div class="col-mb-4 border-end">
+            <h5>Переписки</h5>
+            {% if contacts_with_unread %}
+                <div class="list-group">
+                    {% for item in contacts_with_unread %}
+                        {% with contact=item.contact unread_count=item.unread_count_total %}
+                        <a href="{% url 'messages_list' recipient_id=contact.id %}"
+                           class="list-group-item list-group-item-action
+                           {% if contact == selected_recipient %} active {% endif %}
+                           {% if unread.count > 0 %} list-group-item-warning {% endif %}">
+                            <div class="d-flex justify-content-between align-item-center">
+                                <div class="d-flex align-item-center">
+                                    {% if contact.profile.avatar %}
+                                        <img src="{{ contact.profile.avatar.url }}" alt="Картинка профиля {{contact.username}}"
+                                         class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    {% else %}
+                                        <img src="https://99px.ru/sstorage/1/2021/11/image_13011211933406044080.gif"
+                                         alt="Картинка профиля {{contact.username}}"
+                                         class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    {% endif %}
+                                    <span>{{contact.username}}</span>
+                                </div>
+                                {% if unread_count > 0 %}
+                                    <span class="badge bg-danger">{{unread_count_total}}</span>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">У вас пока нет переписок</p>
+            {% endif %}
         </div>
-    {% else %}
-        <p class="text-muted">У вас нет сообщений</p>
-    {% endif %}
+        <!--     Правая колонка     -->
+        <div class="col-md-8">
+            {% if selected_recipient %}
+                <h5>Переписка с {{selected_recipient.username}}</h5>
+                <div id="messages-container" class="border rounded p-3 mb-3"
+                     style="height: 400px; overflow-y: auto;">
+                    {% if selected_conversation %}
+                        {% for message in selected_conversation %}
+                            <div class="message-bubble
+                                        {% if message.sender == user %} sent
+                                        {% else %} received
+                                        {% endif %}">
+                                <div class="d-flex align-item-center mb-1">
+                                    {% if message.sender.profile.avatar %}
+                                        <img src="{{ message.sender.profile.avatar.url }}"
+                                             alt="Картинка профиля {{message.sender.username}}"
+                                             class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    {% else %}
+                                        <img src="https://99px.ru/sstorage/1/2021/11/image_13011211933406044080.gif"
+                                             alt="Картинка профиля {{message.sender.username}}"
+                                             class="rounded-circle me-2" style="width: 30px; height: 30px;">
+                                    {% endif %}
+                                    <small class="text-muted">{{message.sender.username}} - {{message.timestamp|date:"d M Y H:i"}}</small>
+                                </div>
+                                <div class="message-content">
+                                    {{message.content}}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">Нет сообщений</p>
+                    {% endif %}
+                </div>
+                <!--        Форма отправки сообщений        -->
+                {% if selected_recipient != user %}
+                    <form method="post" action="{% url 'send_message' selected_recipient.id %}" id="message-form">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <textarea name="content" class="form-control" placeholder="Введите сообщение" required></textarea>
+                            <button class="btn btn-primary" type="submit">Отправить</button>
+                        </div>
+                        <input type="hidden" name="subject" value="Переписка с {{selected_recipient.username}}">
+                    </form>
+                {% else %}
+                    <p class="text-muted">Нельзя себе отправить сообщение</p>
+                {% endif %}
+            {% else %}
+                <p class="text-muted">Выберите переписку слева</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
+<style>
+    .message-bubble.sent{
+        text-align: right;
+        margin-left: 60%;
+    }
+    .message-bubble.received{
+        text-align: left;
+        margin-right: 25%;
+    }
+    .message-content{
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background-color: grey;
+        margin-bottom: 10px;
+    }
+    .sent .message-content{
+        background-color: lightgrey;
+    }
+    .received .message-content{
+        background-color: darkgrey;
+    }
+</style>
 {% endblock %}

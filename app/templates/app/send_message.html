@@ -8,7 +8,7 @@
         {% csrf_token %}
         {{form.as_p}}
         <button class="btn btn-primary" type="submit">Отправить</button>
-        <a href="{% url 'profile_view.html' recipient.username %}" class="btn btn-secondary">Назад</a>
+        <a href="{% url 'profile_view' recipient.username %}" class="btn btn-secondary">Назад</a>
     </form>
 </div>
 
