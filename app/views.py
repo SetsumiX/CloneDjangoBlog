@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm, UserProfileForm, MessageForm
-from .models import Post, Like, Comment, UserProfile, Favorite, Message
+from .models import Post, Like, Comment, UserProfile, Favorite, Message, Category, Product
 
 # Create your views here.
 def register(request):
@@ -304,3 +304,36 @@ def send_message(request, recipient_id):
     }
 
     return render(request, 'app/send_message.html', context)
+
+def shop_home(request):
+    products = Product.objects.select_related('category').all()
+    categories = Category.objects.all()
+
+    context = {
+        "products": products,
+        "categories": categories,
+    }
+
+    return render(request, "app/shop/home.html", context)
+
+def shop_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    products = Product.objects.filter(category=category).select_related("category")
+    categories = Category.objects.all()
+
+    context = {
+        "products": products,
+        "category": category,
+        "categories": categories,
+    }
+
+    return render(request, 'app/shop/category.html', context)
+
+def shop_product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    context = {
+        "product": product,
+    }
+
+    return render(request, "app/shop/product_detail.html", context)

@@ -1,0 +1,47 @@
+{% extends 'app/shop/base.html' %}
+
+{% block shop_content %}
+
+<!--Нивигация по категориям + -->
+<div class="row mb-4">
+    <div class="col">
+        <h5>Категории</h5>
+        <ul class="list-unstyled" style="display: flex; gap: 15px;">
+            {% for cat in categories %}
+                <li>
+                    <a href="{% url 'shop_category' cat.id %}">{{cat.name}}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<!--Нивигация по категориям - -->
+
+<!--Список товаров + -->
+<div class="row mb-4">
+    {% for prod in products %}
+        <div class="col-mb-4 mb-4" style="width: 300px">
+            <div class="card h-100">
+                {% if prod.image %}
+                    <img src="{{prod.image.url}}" class="card-img-top" alt="{{prod.name}}" style="width: 150px;">
+                {% else %}
+                    <img src="" class="card-img-top" alt="Нет изображения">
+                {% endif %}
+                <div class="card-body  d-flex flex-column">
+                    <h5 class="card-title">{{prod.name}}</h5>
+                    <p class="card-text">{{prod.description|truncatechars:100}}</p>
+                    <p class="card-text mt-auto"><strong>{{prod.price}}</strong> руб.</p>
+                    <a href="{% url 'shop_product_detail' prod.id %}"
+                        class="btn btn-primary mt-auto">Подробнее</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+    <div class="col">
+        <p class="text-muted">Пусто</p>
+    </div>
+    {% endfor %}
+</div>
+<!--Список товаров - -->
+
+{% endblock %}
