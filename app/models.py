@@ -161,3 +161,11 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+# Оплата
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ("pending","ожидание оплаты"),
+        ("paid","оплачено"),
+        ("cancelled","отменено"),
+    ]

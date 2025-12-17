@@ -2,25 +2,22 @@
 
 {% block shop_content %}
 
-<!--Нивигация по категориям + -->
+<h2>{{category.name}}</h2>
+<!--Навигация по категории-->
 <div class="row mb-4">
     <div class="col">
-        <h5>Категории</h5>
-        <ul class="list-unstyled" style="display: flex; gap: 15px;">
+        <h5>Все категории: </h5>
+        <ul class="list-unstyled">
             {% for cat in categories %}
-                <li>
-                    <a href="{% url 'shop_category' cat.id %}">{{cat.name}}</a>
-                </li>
+                <li><a href="{% url 'shop_category' cat.id %}">{{cat.name}}</a></li>
             {% endfor %}
         </ul>
     </div>
 </div>
-<!--Нивигация по категориям - -->
-
-<!--Список товаров + -->
-<div class="row mb-4">
+<!--список товаров в категории-->
+<div class="row">
     {% for prod in products %}
-        <div class="col-mb-4 mb-4" style="width: 300px">
+        <div class="col-mb-4 mb-4" style="width: 300px;">
                 <a href="{% url 'shop_product_detail' prod.id %}" style="text-decoration: none; color: black;">
                 <div class="card h-100">
                     {% if prod.image %}
@@ -36,12 +33,11 @@
                 </div>
                 </a>
         </div>
+
     {% empty %}
-    <div class="col">
-        <p class="text-muted">Пусто</p>
-    </div>
+        <div class="col">
+            <p class="text-muted">Пусто</p>
+        </div>
     {% endfor %}
 </div>
-<!--Список товаров - -->
-
 {% endblock %}
