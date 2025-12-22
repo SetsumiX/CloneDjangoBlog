@@ -7,7 +7,12 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db.models import Q
 from .forms import UserRegisterForm, UserLoginForm, PostForm, CommentForm, UserProfileForm, MessageForm
-from .models import Post, Like, Comment, UserProfile, Favorite, Message, Category, Product
+from .models import Post, Like, Comment, UserProfile, Favorite, Message, Category, Product, Order
+import yookassa
+from django.conf import settings
+
+yookassa.Configuration.account_id = settings.YOOKASSA_SHOP_ID
+yookassa.Configuration.secret_key = settings.YOOKASSA_SECRET_KEY
 
 # Create your views here.
 def register(request):
@@ -337,3 +342,40 @@ def shop_product_detail(request, product_id):
     }
 
     return render(request, "app/shop/product_detail.html", context)
+
+def shop_checkout(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == "POST":
+        quantity = int(request.POST.get('quantity', 1))
+        total_price = product.price * quantity
+        order = Order.objects.create(
+            user = request.user,
+            product = product,
+            quantity = quantity,
+            total_price = total_price,
+        )
+
+
+        paymant = yookassa.Payment.create({
+            "amount": {
+                "value": str(total_price),
+                "current": "RUB",
+            },
+            "confirmation": {
+                "type": "redirect",
+                "return_url": request.build_absolute_uri("/shop/success"),
+            },
+            "capture": True,
+            "description": f"Покупка {product.name}",
+            "metadata": {
+                "order_id": order.id,
+            },
+        })
+
+        order.yookassa_payment_id = paymant.id
+        order.save()
+        return redirect(paymant.confirmation.confirmation_uri)
+    return redirect("shop_product_detail", product_id=product_id)
+
+def shop_success(request):
+    return render(request, "app/shop/success.html")

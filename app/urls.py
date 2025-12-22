@@ -32,4 +32,7 @@ urlpatterns = [
     path('shop/', views.shop_home, name="shop_home"),
     path('shop/category/<int:category_id>/', views.shop_category, name="shop_category"),
     path('shop/product/<int:product_id>/', views.shop_product_detail, name="shop_product_detail"),
+
+    path('shop/product/<int:product_id>/checkout/', views.shop_checkout, name="shop_checkout"),
+    path('shop/success', views.shop_success, name="shop_success"),
 ]

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Product, Category
+from .models import Post, Product, Category, ProductImage
 from PIL import Image
 
 # Register your models here.
@@ -10,17 +10,20 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ["name", "description"]
     search_fields = ["name"]
 
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    list_display = ['product', 'image', 'is_primary', 'order']
+    list_filter = ['product', 'is_primary']
+    search_fields = ['product__name']
+
+class ProductImageInline(admin.TabularInline): # Или StackedInline для более подробного отображения
+    model = ProductImage
+    extra = 1 # Количество пустых форм для добавления новых изображений
+    fields = ('image', 'is_primary', 'order')
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["name", "category", "price", "created_at"]
-    list_filter = ["category", "created_at"]
-    search_fields = ["name", "description"]
-
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        if obj.image:
-            img = Image.open(obj.image.path)
-            if img.height > 800 or img.width > 800:
-                output_size = (800, 800)
-                img.thumbnail(output_size)
-                img.save(obj.image.path)
+    list_display = ['name', 'category', 'price', 'created_at']
+    list_filter = ['category', 'created_at']
+    search_fields = ['name', 'description']
+    inlines = [ProductImageInline]
